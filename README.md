@@ -153,9 +153,10 @@ Gamepad ──┘                └→ UIAction    ─→ GameManager / UIManag
   tela, abertura sem morte, bot desviando, perseguidor escapável no nível máximo, power-ups
   alcançáveis, rochas nunca fecham a passagem).
 - `npm run smoke` — abre o jogo no Chromium em 6 formatos de tela (16:9, 21:9, 16:10, celular em
-  pé 19.5:9, celular deitado 18:9, tablet 4:3): menu, jogar, arrastar no touch, pausar, game over,
-  restart, fim de jogo com power-up + chuva de meteoros e NEW HIGH SCORE; falha se houver erro de
-  runtime.
+  pé 19.5:9, celular deitado 18:9, tablet 4:3): menu, logo Domus Arcis, settings + mute salvo,
+  música tocando (sinal de áudio medido), jogar, arrastar no touch, pausar, game over, restart,
+  fim de jogo com power-up + chuva de meteoros, coleta de moedas, explosão e NEW HIGH SCORE;
+  falha se houver qualquer erro de runtime.
 
 Parâmetros de URL para QA: `?debug` (estatísticas: FPS, draw calls, partículas, dificuldade),
 `?god` (invencível), `?seed=N` (spawns determinísticos), `?time=90` (começa com a dificuldade de 90 s).

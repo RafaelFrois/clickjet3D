@@ -57,6 +57,20 @@ async function run() {
       await page.waitForFunction(() => window.__clickjet?.state === 'menu', null, { timeout: 20000 });
       await sleep(1200);
       await page.screenshot({ path: `${OUT}/${vp.name}-1-menu.png` });
+      if (vp === VIEWPORTS[0]) {
+        // Settings screen + persisted mute toggle
+        await page.click('#btn-settings', { force: true });
+        await sleep(400);
+        await page.screenshot({ path: `${OUT}/${vp.name}-1b-settings.png` });
+        await page.click('#set-mute', { force: true });
+        const muted = await page.evaluate(() => JSON.parse(localStorage.getItem('clickjet3d:save:v1')).settings.muted);
+        if (muted !== true) errors.push(`[${vp.name}] mute was not persisted`);
+        await page.click('#set-mute', { force: true });
+        await page.keyboard.press('Escape');
+        await sleep(300);
+        const back = await page.evaluate(() => window.__clickjet.ui.current);
+        if (back !== 'menu') errors.push(`[${vp.name}] settings did not return to menu (${back})`);
+      }
 
       const logoOk = await page.evaluate(() => document.querySelector('.domus').naturalWidth > 0);
       if (!logoOk) errors.push(`[${vp.name}] Domus Arcis logo failed to load`);
@@ -64,7 +78,28 @@ async function run() {
       await page.click('#btn-play', { force: true });
       await sleep(1500);
       const audio = await page.evaluate(() => ({ ready: window.__clickjet.audio.ready, track: window.__clickjet.audio.currentTrackName }));
-      if (!audio.track) errors.push(`[${vp.name}] music did not start`);
+      if (!audio.track || !audio.ready) errors.push(`[${vp.name}] music did not start (${JSON.stringify(audio)})`);
+      if (vp === VIEWPORTS[0]) {
+        // The mix must actually carry signal (music + SFX).
+        const rms = await page.evaluate(async () => {
+          const a = window.__clickjet.audio;
+          const an = a.ctx.createAnalyser();
+          an.fftSize = 2048;
+          a.master.connect(an);
+          const buf = new Float32Array(an.fftSize);
+          let peak = 0;
+          for (let i = 0; i < 20; i++) {
+            await new Promise((r) => setTimeout(r, 60));
+            an.getFloatTimeDomainData(buf);
+            let sum = 0;
+            for (const v of buf) sum += v * v;
+            peak = Math.max(peak, Math.sqrt(sum / buf.length));
+          }
+          return peak;
+        });
+        console.log(`audio RMS peak: ${rms.toFixed(4)}`);
+        if (!(rms > 0.002)) errors.push(`[${vp.name}] audio output is silent (rms ${rms})`);
+      }
 
       if (vp.touch) {
         // Relative touch drag (default touch mode) must move the rocket.

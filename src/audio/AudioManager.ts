@@ -326,7 +326,11 @@ export class AudioManager {
           else osc.type = w;
           vol = (w === 'triangle' ? 0.2 : w === 'sawtooth' ? 0.07 : 0.085) * ev.vel;
           release = 0.05;
-          if (dur > 0.25) osc.detune.setValueAtTime(0, t + 0.12), osc.detune.linearRampToValueAtTime(12, t + dur);
+          if (dur > 0.25) {
+            // Tiny pitch lift on long notes for a livelier chiptune lead.
+            osc.detune.setValueAtTime(0, t + 0.12);
+            osc.detune.linearRampToValueAtTime(12, t + dur);
+          }
         } else if (ev.voice === 'bass') {
           osc.type = 'triangle';
           vol = 0.26 * ev.vel;
