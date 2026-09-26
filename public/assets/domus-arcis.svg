@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 112" role="img" aria-label="Domus Arcis">
+  <!-- Stylized recreation of the Domus Arcis signature (diagonal blade + serif wordmark).
+       Replace this file with the original logo artwork if available. -->
+  <g fill="none" stroke="#ffffff" stroke-linecap="square">
+    <path d="M40 66 L96 10" stroke-width="3"/>
+    <path d="M44 62 L92 14" stroke-width="1" stroke-opacity="0.6" transform="translate(2 2)"/>
+    <path d="M33 58 L48 73" stroke-width="3.5"/>
+    <path d="M40 66 L32 74" stroke-width="4"/>
+    <circle cx="30" cy="76" r="2.6" stroke-width="2"/>
+    <g stroke-width="1.6">
+      <path d="M56 50 l4 4"/><path d="M62 44 l4 4"/><path d="M68 38 l4 4"/><path d="M74 32 l4 4"/><path d="M80 26 l4 4"/><path d="M86 20 l4 4"/>
+    </g>
+  </g>
+  <g fill="#ffffff" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle" letter-spacing="1.5">
+    <text x="60" y="96" font-size="15">DOMUS</text>
+    <text x="60" y="110" font-size="15">ARCIS</text>
+  </g>
+</svg>
