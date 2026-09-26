@@ -21,9 +21,23 @@ npm test           # testes (unitários + simulações de fairness)
 npm run smoke      # teste end-to-end no Chromium headless (depois do build), salva screenshots/
 ```
 
-O build usa caminhos relativos (`base: './'`) e funciona em qualquer hospedagem estática
-(GitHub Pages, itch.io, Netlify…). O workflow `.github/workflows/deploy.yml` publica no
-GitHub Pages a cada push na `main` (uma vez: *Settings → Pages → Source: GitHub Actions*).
+## Deploy
+
+### Vercel (recomendado)
+O projeto já vem com [`vercel.json`](vercel.json) (framework Vite, `npm run build`, saída `dist/`,
+cache longo para os assets com hash).
+
+1. Em [vercel.com/new](https://vercel.com/new), importe o repositório `clickjet3D`.
+2. Não precisa mudar nada — as configurações são lidas do `vercel.json`. Clique em **Deploy**.
+3. Cada push na `main` publica em produção; cada PR ganha um link de preview.
+
+Pela CLI: `npx vercel` (preview) e `npx vercel --prod` (produção).
+
+### Outras hospedagens
+O build usa caminhos relativos (`base: './'`), então `dist/` funciona em qualquer hospedagem
+estática (itch.io, Netlify, GitHub Pages…). Para GitHub Pages há o workflow manual
+`.github/workflows/deploy.yml` (*Settings → Pages → Source: GitHub Actions*, depois
+*Actions → Deploy to GitHub Pages → Run workflow*).
 
 ## Controles
 

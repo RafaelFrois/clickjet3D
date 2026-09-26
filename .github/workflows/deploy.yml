@@ -1,10 +1,9 @@
-# Publishes the game to GitHub Pages on every push to main.
-# One-time setup: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# Optional alternative to Vercel: publishes the game to GitHub Pages (manual run).
+# One-time setup: Settings → Pages → Build and deployment → Source: "GitHub Actions",
+# then Actions → "Deploy to GitHub Pages" → Run workflow.
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
