@@ -1,0 +1,11 @@
+{
+  "name": "ClickJet 3D",
+  "short_name": "ClickJet 3D",
+  "description": "Low-poly space arcade by Domus Arcis.",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#05030f",
+  "theme_color": "#05030f",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

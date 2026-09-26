@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#05030f" />
+    <meta name="description" content="ClickJet 3D — low-poly space arcade by Domus Arcis. Collect coins, dodge meteors, rocks and aliens, escape the purple chaser!" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <title>ClickJet 3D</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="game" aria-label="ClickJet 3D game view"></canvas>
+      <div id="fx" aria-hidden="true"></div>
+      <div id="ui">
+        <div id="boot" class="screen active">
+          <div class="boot-text">LOADING<span class="blink">...</span></div>
+          <noscript><p class="boot-text">ENABLE JAVASCRIPT TO PLAY</p></noscript>
+        </div>
+
+        <!-- MAIN MENU -->
+        <section id="screen-menu" class="screen" aria-label="Main menu">
+          <button class="icon-btn corner tl" id="btn-mute" data-nav aria-label="Toggle sound"><span data-icon="soundOn"></span></button>
+          <button class="icon-btn corner tr" id="btn-settings" data-nav aria-label="Settings"><span data-icon="gear"></span></button>
+          <div class="menu-center">
+            <h1 class="logo" aria-label="ClickJet 3D"><span class="logo-text">CLICKJET</span><span class="logo-3d">3D</span></h1>
+            <button class="px-btn px-round btn-play" id="btn-play" data-nav>PLAY</button>
+            <div class="px-panel hs-panel">
+              <div class="hs-title">HIGH<br />SCORE</div>
+              <div class="hs-rule"></div>
+              <div class="hs-value" id="menu-highscore">0</div>
+            </div>
+          </div>
+          <img class="domus" src="assets/domus-arcis.svg" alt="Domus Arcis" draggable="false" />
+          <div class="music-box corner br">
+            <span class="track-toast" id="track-toast"></span>
+            <button class="icon-btn" id="btn-music" data-nav aria-label="Next song"><span data-icon="music"></span></button>
+          </div>
+        </section>
+
+        <!-- HUD -->
+        <section id="screen-hud" class="screen" aria-label="Game HUD">
+          <div class="hud-top">
+            <div class="hud-left">
+              <div class="px-pill hud-score"><span id="hud-score">0</span><span class="combo" id="hud-combo"></span></div>
+              <div class="hud-hi">HI <span id="hud-hi">0</span></div>
+            </div>
+            <div class="px-pill hud-time"><span id="hud-time">0.0</span><span class="clock" data-icon="clock"></span></div>
+            <div class="hud-right">
+              <button class="icon-btn small" id="btn-hud-mute" aria-label="Toggle sound"><span data-icon="soundOn"></span></button>
+              <button class="icon-btn small" id="btn-pause" aria-label="Pause"><span data-icon="pause"></span></button>
+            </div>
+          </div>
+          <div class="px-panel powerup" id="hud-powerup">
+            <div class="pu-col"><div class="pu-label">BONUS</div><div class="pu-value" id="pu-rate">+10/s</div></div>
+            <div class="pu-sep"></div>
+            <div class="pu-col"><div class="pu-label">TIME</div><div class="pu-value" id="pu-time">5.0</div></div>
+          </div>
+          <div class="banner" id="banner"></div>
+          <div class="hint" id="play-hint"></div>
+        </section>
+
+        <!-- PAUSE -->
+        <section id="screen-pause" class="screen dim" aria-label="Paused">
+          <div class="px-panel dialog">
+            <h2 class="dialog-title">PAUSED</h2>
+            <button class="px-btn" data-nav id="btn-resume"><span data-icon="play"></span>RESUME</button>
+            <button class="px-btn" data-nav id="btn-pause-restart"><span data-icon="restart"></span>RESTART</button>
+            <button class="px-btn" data-nav id="btn-pause-settings"><span data-icon="gear"></span>SETTINGS</button>
+            <button class="px-btn" data-nav id="btn-pause-menu"><span data-icon="home"></span>MENU</button>
+          </div>
+        </section>
+
+        <!-- GAME OVER -->
+        <section id="screen-gameover" class="screen dim" aria-label="Game over">
+          <div class="px-panel go-panel">
+            <h2 class="go-title"><span>GAME</span><span>OVER</span></h2>
+            <div class="go-rule"></div>
+            <div class="go-stats">
+              <div class="go-col">
+                <div class="go-label">SCORE</div>
+                <div class="go-value" id="go-score">0</div>
+              </div>
+              <div class="go-divider"></div>
+              <div class="go-col">
+                <div class="go-label go-label-time"><span class="clock" data-icon="clock"></span>TIME</div>
+                <div class="go-value" id="go-time">0.0</div>
+              </div>
+            </div>
+            <div class="go-high"><span class="go-high-label">HIGH SCORE</span><span id="go-high">0</span></div>
+            <div class="go-new" id="go-new" aria-live="polite">NEW HIGH SCORE!</div>
+            <div class="go-buttons">
+              <button class="px-btn btn-restart" data-nav id="btn-restart"><span data-icon="restart"></span>RESTART</button>
+              <button class="px-btn btn-menu" data-nav id="btn-go-menu"><span data-icon="home"></span>MENU</button>
+            </div>
+          </div>
+          <div class="confetti" id="confetti"></div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section id="screen-settings" class="screen dim" aria-label="Settings">
+          <div class="px-panel dialog settings">
+            <h2 class="dialog-title">SETTINGS</h2>
+            <label class="row"><span>MUSIC</span><input type="range" id="set-music" min="0" max="100" step="5" data-nav /></label>
+            <label class="row"><span>SFX</span><input type="range" id="set-sfx" min="0" max="100" step="5" data-nav /></label>
+            <div class="row"><span>SOUND</span><button class="px-btn small" id="set-mute" data-nav>ON</button></div>
+            <div class="row"><span>QUALITY</span><button class="px-btn small" id="set-quality" data-nav>AUTO</button></div>
+            <div class="row"><span>SHAKE</span><button class="px-btn small" id="set-shake" data-nav>ON</button></div>
+            <div class="row"><span>TOUCH</span><button class="px-btn small" id="set-touch" data-nav>DRAG</button></div>
+            <div class="row"><span>FPS</span><button class="px-btn small" id="set-fps" data-nav>OFF</button></div>
+            <button class="px-btn" id="btn-settings-back" data-nav>BACK</button>
+          </div>
+        </section>
+
+        <div id="debug" class="debug" aria-hidden="true"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
