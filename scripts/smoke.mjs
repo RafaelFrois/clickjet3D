@@ -58,8 +58,28 @@ async function run() {
       await sleep(1200);
       await page.screenshot({ path: `${OUT}/${vp.name}-1-menu.png` });
 
+      const logoOk = await page.evaluate(() => document.querySelector('.domus').naturalWidth > 0);
+      if (!logoOk) errors.push(`[${vp.name}] Domus Arcis logo failed to load`);
+
       await page.click('#btn-play', { force: true });
       await sleep(1500);
+      const audio = await page.evaluate(() => ({ ready: window.__clickjet.audio.ready, track: window.__clickjet.audio.currentTrackName }));
+      if (!audio.track) errors.push(`[${vp.name}] music did not start`);
+
+      if (vp.touch) {
+        // Relative touch drag (default touch mode) must move the rocket.
+        const before = await page.evaluate(() => window.__clickjet.world.player.pos.x);
+        await page.evaluate(({ w, h }) => {
+          const c = document.getElementById('game');
+          const ev = (type, x) => c.dispatchEvent(new PointerEvent(type, { pointerType: 'touch', pointerId: 7, isPrimary: true, clientX: x, clientY: h * 0.7, bubbles: true }));
+          ev('pointerdown', w * 0.5);
+          for (let i = 1; i <= 10; i++) ev('pointermove', w * 0.5 + i * (w * 0.03));
+          ev('pointerup', w * 0.8);
+        }, { w: vp.width, h: vp.height });
+        await sleep(200);
+        const after = await page.evaluate(() => window.__clickjet.world.player.pos.x);
+        if (!(after > before + 0.5)) errors.push(`[${vp.name}] touch drag did not move the rocket (${before} → ${after})`);
+      }
       // Fly around with the keyboard for a bit.
       for (const key of ['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown']) {
         await page.keyboard.down(key);
@@ -110,6 +130,25 @@ async function run() {
     });
     await sleep(2500);
     await page.screenshot({ path: `${OUT}/late-2-powerup-shower.png` });
+    // Coin feedback: drop coins right on the rocket.
+    await page.evaluate(() => {
+      const g = window.__clickjet;
+      const p = g.world.player.pos;
+      for (let i = 0; i < 6; i++) g.world.coinPool(i % 3 === 0 ? 'rainbow' : 'yellow').acquire().spawn(p.x + (i - 2.5) * 0.3, p.z - 0.4 - i * 0.2, 0, 0);
+    });
+    await sleep(350);
+    await page.screenshot({ path: `${OUT}/late-3-coins.png` });
+    // New high score → game over celebration.
+    await page.evaluate(() => {
+      const g = window.__clickjet;
+      g.world.invulnerable = false;
+      for (let i = 0; i < 40; i++) g.session.score.addCoin('rainbow', 0, 0, 0);
+      g.session['die']('meteor');
+    });
+    await sleep(300);
+    await page.screenshot({ path: `${OUT}/late-4-explosion.png` });
+    await sleep(1800);
+    await page.screenshot({ path: `${OUT}/late-5-new-highscore.png` });
     const stats = await page.evaluate(() => {
       const g = window.__clickjet;
       return { fps: g.quality.fps, level: g.quality.level, calls: g.renderer.info.render.calls, tris: g.renderer.info.render.triangles, heap: performance.memory?.usedJSHeapSize };

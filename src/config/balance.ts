@@ -60,7 +60,7 @@ export const BALANCE = {
   },
 
   meteors: {
-    firstAt: 4,
+    firstAt: 4.5,
     interval: [3.4, 0.95] as Range,
     burstMax: [1, 3] as Range,
     /** Telegraph time (warning line + edge marker) before a meteor enters. */
@@ -100,7 +100,7 @@ export const BALANCE = {
   },
 
   chaser: {
-    firstAt: 6.5,
+    firstAt: 7.5,
     warn: 1.4,
     /** Always slower than the player (max 11) so escaping is always possible. */
     speed: [4.6, 8.1] as Range,

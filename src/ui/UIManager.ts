@@ -117,6 +117,7 @@ export class UIManager {
   /* ------------------------------- Screens ------------------------------- */
 
   show(id: ScreenId): void {
+    (document.activeElement as HTMLElement | null)?.blur?.();
     for (const [key, el] of Object.entries(this.screens)) el.classList.toggle('active', key === id);
     this.current = id;
     this.focusIndex = 0;

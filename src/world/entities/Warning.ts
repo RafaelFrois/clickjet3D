@@ -18,10 +18,13 @@ varying vec2 vUv;
 void main() {
   // vUv.y: 0 at the entry point, 1 at the far end of the lane.
   float along = vUv.y * uLen;
-  float dash = step(0.5, fract(along / 1.4 - uTime * 2.5));
-  float edge = smoothstep(0.38, 0.5, abs(vUv.x - 0.5));
-  float fade = 1.0 - smoothstep(0.35, 1.0, vUv.y);
-  float a = uAlpha * fade * (0.12 + 0.28 * dash + 0.6 * edge);
+  // Marching chevron-like dashes along the lane edges only (no filled road).
+  float dash = step(0.45, fract(along / 1.6 - uTime * 3.0));
+  float edge = smoothstep(0.41, 0.49, abs(vUv.x - 0.5));
+  float center = 1.0 - smoothstep(0.0, 0.06, abs(vUv.x - 0.5));
+  // Strong near the entry point, fading out along the path (keeps the view clean).
+  float fade = 1.0 - smoothstep(0.08, 0.55, vUv.y);
+  float a = uAlpha * fade * (0.05 + 0.55 * edge * dash + 0.3 * center * dash);
   gl_FragColor = vec4(uColor * a, a);
   #include <colorspace_fragment>
 }`;

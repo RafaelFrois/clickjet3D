@@ -70,6 +70,7 @@ export class GameManager {
   private realTime = 0;
   private debugVisible: boolean;
   private coinsThisRun = 0;
+  private menuMeteorTimer = 1.5;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -488,6 +489,7 @@ export class GameManager {
         break;
       case 'menu':
         p.updateMenu(dt, sharedUniforms.uTime.value, this.particles);
+        this.updateMenuMeteors(dt);
         break;
       default:
         break;
@@ -510,6 +512,40 @@ export class GameManager {
     this.updateOverlay(dt);
     this.render();
   };
+
+  /** Menu ambience: small flaming meteors occasionally streak behind the rocket. */
+  private updateMenuMeteors(dt: number): void {
+    const w = this.world;
+    const t = sharedUniforms.uTime.value;
+    const list = w.meteors.active;
+    for (let i = list.length - 1; i >= 0; i--) {
+      const m = list[i];
+      m.update(dt, t, this.particles);
+      if (m.age > 5) {
+        m.hide();
+        w.meteors.release(m);
+      }
+    }
+    this.menuMeteorTimer -= dt;
+    if (this.menuMeteorTimer > 0) return;
+    this.menuMeteorTimer = 2.5 + Math.random() * 3.5;
+    const m = w.meteors.acquire();
+    if (!m) return;
+    // Place it far behind the rocket (as seen from the menu camera), crossing sideways.
+    const cam = this.camera.camera.position;
+    const p = w.player.pos;
+    const fx = p.x - cam.x;
+    const fz = p.z - cam.z;
+    const fl = Math.hypot(fx, fz) || 1;
+    const dist = 14 + Math.random() * 16;
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const rx = -fz / fl;
+    const rz = fx / fl;
+    const cx = p.x + (fx / fl) * dist;
+    const cz = p.z + (fz / fl) * dist;
+    const speed = 10 + Math.random() * 6;
+    m.spawn(cx - rx * side * 26, cz - rz * side * 26, rx * side * speed, rz * side * speed + 1.5, 0.35 + Math.random() * 0.35, 'S');
+  }
 
   private updateWhooshes(): void {
     const p = this.world.player.pos;

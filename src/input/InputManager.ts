@@ -166,7 +166,8 @@ export class InputManager {
   private onKeyDown(e: KeyboardEvent): void {
     const target = e.target as HTMLElement | null;
     if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT') && e.code !== 'Escape') return;
-    if (MOVE_KEYS[e.code] || e.code === 'Space') e.preventDefault();
+    // Avoid page scrolling and native button activation (we handle confirm ourselves).
+    if (MOVE_KEYS[e.code] || e.code === 'Space' || e.code === 'Enter' || e.code === 'NumpadEnter') e.preventDefault();
     this.setDevice('keyboard');
     if (!e.repeat) this.keys.add(e.code);
     const action = KEY_ACTIONS[e.code] ?? (e.code === 'KeyW' ? 'up' : e.code === 'KeyS' ? 'down' : e.code === 'KeyA' ? 'left' : e.code === 'KeyD' ? 'right' : null);

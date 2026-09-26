@@ -239,7 +239,7 @@ export class SpaceBackground {
     mat.color.setHex(tint);
     const body = new THREE.Mesh(models.planet, mat);
     const ring = new THREE.Mesh(models.planetRing, models.mat.planetRing);
-    ring.rotation.x = Math.PI / 2 - 0.35;
+    ring.rotation.set(1.05, 0.2, 0.5);
     g.add(body, ring);
     g.scale.setScalar(scale);
     return g;

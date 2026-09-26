@@ -58,8 +58,8 @@ export class Effects {
       8,
     );
     this.ring = new THREE.Mesh(
-      new THREE.RingGeometry(0.85, 1, 40).rotateX(-Math.PI / 2),
-      new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }),
+      new THREE.RingGeometry(0.9, 1, 40).rotateX(-Math.PI / 2),
+      new THREE.MeshBasicMaterial({ color: 0xffa040, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }),
     );
     this.ring.visible = false;
     this.group.add(this.ring);
@@ -155,8 +155,8 @@ export class Effects {
     if (this.ring.visible) {
       this.ringLife -= dt;
       const t = 1 - this.ringLife / 0.5;
-      this.ring.scale.setScalar(0.5 + t * 6);
-      (this.ring.material as THREE.MeshBasicMaterial).opacity = Math.max(0, 0.8 * (1 - t));
+      this.ring.scale.setScalar(0.5 + t * 4.5);
+      (this.ring.material as THREE.MeshBasicMaterial).opacity = Math.max(0, 0.9 * (1 - t) * (1 - t));
       if (this.ringLife <= 0) this.ring.visible = false;
     }
   }

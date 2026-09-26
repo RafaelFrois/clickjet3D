@@ -56,6 +56,7 @@ export class GreenAlien {
   private phase = 0;
   private baseX = 0;
   private formation: FormationOptions | null = null;
+  private entered = false;
 
   constructor(models: Models) {
     this.model = new THREE.Mesh(models.greenAlien, models.mat.greenAlien);
@@ -77,6 +78,7 @@ export class GreenAlien {
     this.age = 0;
     this.phase = Math.random() * Math.PI * 2;
     this.formation = formation;
+    this.entered = false;
     this.state = formation ? 'formation' : 'wander';
     this.stateTimer = 0;
     this.retarget = 0;
@@ -143,9 +145,11 @@ export class GreenAlien {
     if (this.state !== 'formation') {
       this.pos.x += this.vel.x * dt;
       this.pos.z += this.vel.z * dt;
-      if (this.state === 'wander' || this.state === 'telegraph') {
-        // Keep wandering aliens inside the arena.
-        this.pos.x = clamp(this.pos.x, -a.halfWidth - 2, a.halfWidth + 2);
+      if (!this.entered) {
+        this.entered = Math.abs(this.pos.x) < a.halfWidth && this.pos.z > a.zMin;
+      } else if (this.state === 'wander' || this.state === 'telegraph') {
+        // Once inside, wandering aliens stay in the arena.
+        this.pos.x = clamp(this.pos.x, -a.halfWidth - 1, a.halfWidth + 1);
       }
     }
     this.animate(ctx.time);
